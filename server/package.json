@@ -1,0 +1,50 @@
+{
+  "name": "seeingscience-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "engines": {
+    "node": "^15.x"
+  },
+  "scripts": {
+    "start": "node dist/index.js",
+    "watch": "rm -rf ./dist && tsc -w",
+    "dev": "nodemon dist/index.js",
+    "create:migration": "mikro-orm migration:create"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.9",
+    "@types/lodash": "^4.14.165",
+    "@types/node": "^14.14.9",
+    "@types/sequelize": "^4.28.9",
+    "@typescript-eslint/eslint-plugin": "^4.8.2",
+    "@typescript-eslint/parser": "^4.8.2",
+    "eslint": "^7.14.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "nodemon": "^2.0.6",
+    "prettier": "^2.2.0",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.1.2"
+  },
+  "dependencies": {
+    "@mikro-orm/cli": "^4.3.1",
+    "@mikro-orm/core": "^4.3.1",
+    "@mikro-orm/migrations": "^4.3.1",
+    "@mikro-orm/postgresql": "^4.3.1",
+    "apollo-server-express": "^2.19.0",
+    "class-validator": "^0.12.2",
+    "express": "^4.17.1",
+    "graphql": "^15.4.0",
+    "pg": "^8.5.1",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.1.1"
+  },
+  "mikro-orm": {
+    "useTsNode": true,
+    "configPaths": [
+      "./src/mikro-orm.config.ts",
+      "./dist/mikro-orm.config.js"
+    ]
+  }
+}
