@@ -43,6 +43,7 @@ class UserResponse {
 export class UserResolver {
   @Query(() => User, { nullable: true })
   async me(@Ctx() { em, req }: MyContext): Promise<User | null> {
+    console.log("session: ", req.session);
     if (!req.session.userId) {
       return null;
     }
