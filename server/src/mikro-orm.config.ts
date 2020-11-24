@@ -4,7 +4,7 @@ import path from "path";
 import { User } from "./entities/User";
 
 export default {
-  dbName: "seeing-science",
+  dbName: "reddit",
   type: "postgresql",
   user: "postgres",
   password: "postgres",
