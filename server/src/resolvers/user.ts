@@ -87,7 +87,7 @@ export class UserResolver {
 
     const hashedPass = await argon2.hash(options.password);
     const user = await em.create(User, {
-      username: options.username.toLowerCase(),
+      username: options.username,
       password: hashedPass,
     });
 
@@ -114,7 +114,7 @@ export class UserResolver {
     @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
     const user = await em.findOne(User, {
-      username: options.username.toLowerCase(),
+      username: options.username,
     });
 
     if (!user) {
