@@ -11,8 +11,9 @@ import { User } from "../entities/User";
 import { MyContext } from "../types";
 import argon2 from "argon2";
 import { COOKIE_NAME } from "../constants";
-import { UsernamePasswordInput } from "./UsernamePasswordInput";
+import { RegisterInput } from "../types/RegisterInput";
 import { validateRegister } from "../utils/validateRegister";
+import { LoginInput } from "../types/LoginInput";
 
 @ObjectType()
 class FieldError {
@@ -52,15 +53,18 @@ export class UserResolver {
 
   @Mutation(() => UserResponse)
   async register(
-    @Arg("options") options: UsernamePasswordInput,
+    @Arg("input") input: RegisterInput,
     @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
-    const isValid = validateRegister(options);
+    const errors = validateRegister(input);
+    if (errors) {
+      return { errors };
+    }
 
-    const hashedPass = await argon2.hash(options.password);
+    const hashedPass = await argon2.hash(input.password);
     const user = await em.create(User, {
-      email: options.email,
-      username: options.username,
+      email: input.email,
+      username: input.username,
       password: hashedPass,
     });
 
@@ -83,15 +87,15 @@ export class UserResolver {
 
   @Mutation(() => UserResponse)
   async login(
-    @Arg("usernameOrEmail") usernameOrEmail: string,
+    @Arg("input") input: LoginInput,
     @Ctx() { em, req }: MyContext
   ): Promise<UserResponse> {
     const user = await em.findOne(
       User,
-      usernameOrEmail.includes("@")
-        ? { email: usernameOrEmail }
+      input.usernameOrEmail.includes("@")
+        ? { email: input.usernameOrEmail }
         : {
-            username: usernameOrEmail,
+            username: input.usernameOrEmail,
           }
     );
 
@@ -101,7 +105,7 @@ export class UserResolver {
       };
     }
 
-    const valid = await argon2.verify(user.password, options.password);
+    const valid = await argon2.verify(user.password, input.password);
     if (!valid) {
       return {
         errors: [{ field: "password", message: "Invalid Login" }],
@@ -114,7 +118,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  async logout(@Ctx() { req, res }: MyContext) {
+  async logout(@Ctx() { req, res }: MyContext): Promise<boolean> {
     return new Promise((resolve) =>
       req.session.destroy((err) => {
         if (err) {
