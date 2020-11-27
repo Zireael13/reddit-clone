@@ -36,7 +36,7 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
     )
   }
   return (
-    <Flex bg="green.500">
+    <Flex position="sticky" top={0} zIndex={1} bg="green.500">
       <HStack bg="green.200" p={4} spacing={5} justify="end" ml="auto">
         {body}
       </HStack>

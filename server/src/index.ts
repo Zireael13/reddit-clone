@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import { MikroORM } from "@mikro-orm/core";
 import { COOKIE_NAME, __prod__ } from "./constants";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
@@ -14,10 +13,23 @@ import connectRedis from "connect-redis";
 import { MyContext } from "./types";
 import cors from "cors";
 import { User } from "./entities/User";
+import { createConnection } from "typeorm";
+import { Post } from "./entities/Post";
+import path from "path";
 
 const main = async () => {
-  const orm = await MikroORM.init();
-  await orm.getMigrator().up();
+  const conn = await createConnection({
+    type: "postgres",
+    database: "reddit",
+    username: "postgres",
+    password: "postgres",
+    logging: true,
+    synchronize: true,
+    migrations: [path.join(__dirname, "./migrations/*")],
+    entities: [Post, User],
+  });
+
+  await conn.runMigrations();
 
   const app = express();
   app.use(cors({ origin: "http://localhost:3000", credentials: true }));
@@ -49,16 +61,13 @@ const main = async () => {
       resolvers: [HelloResolver, PostResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }): MyContext => ({ em: orm.em, req, res, redis }),
+    context: ({ req, res }): MyContext => ({ req, res, redis }),
   });
 
   apolloServer.applyMiddleware({
     app,
     cors: false,
   });
-
-  const users = await orm.em.find(User, {});
-  console.log(users);
 
   /* const post = orm.em.create(Post, { title: "my post" });
   await orm.em.persistAndFlush(post);
