@@ -16,7 +16,7 @@ import { User } from "./entities/User";
 import { createConnection } from "typeorm";
 import { Post } from "./entities/Post";
 import path from "path";
-
+// rerun
 const main = async () => {
   const conn = await createConnection({
     type: "postgres",
@@ -30,6 +30,8 @@ const main = async () => {
   });
 
   await conn.runMigrations();
+
+  //await Post.delete({});
 
   const app = express();
   app.use(cors({ origin: "http://localhost:3000", credentials: true }));
