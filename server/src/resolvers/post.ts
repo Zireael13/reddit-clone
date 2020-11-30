@@ -17,7 +17,7 @@ import {
 import { MyContext } from "../types";
 import { isAuth } from "../middleware/isAuth";
 import { getConnection } from "typeorm";
-import { info } from "console";
+import { Updoot } from "../entities/Updoot";
 
 @InputType()
 class PostInput {
@@ -45,9 +45,43 @@ export class PostResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseMiddleware(isAuth)
-  vote(@Arg("postId", () => Int) postId: number, @Ctx() { req }: MyContext) {
+  // @UseMiddleware(isAuth)
+  async vote(
+    @Arg("postId", () => Int) postId: number,
+    @Arg("value", () => Int) value: number,
+    @Ctx() { req }: MyContext
+  ): Promise<boolean> {
     const { userId } = req.session;
+
+    console.log(userId);
+
+    const isUpdoot = value !== -1;
+    const realValue = isUpdoot ? 1 : -1;
+    // await Updoot.insert({
+    //   userId,
+    //   postId,
+    //   value: realValue,
+    // });
+
+    try {
+      await getConnection().query(
+        `
+    START TRANSACTION;
+
+    insert into updoot ("userId", "postId", "value")
+    values (${userId}, ${postId}, ${realValue});
+
+    update post p
+    set points = points + ${realValue}
+    where id = ${postId};
+    
+    COMMIT;`
+      );
+    } catch (e) {
+      await getConnection().query(`
+      ROLLBACK;`);
+      return false;
+    }
 
     return true;
   }
@@ -103,7 +137,7 @@ export class PostResolver {
     // // }
 
     // // const posts = await qb.getMany();
-    console.log(posts);
+    // console.log(posts);
 
     return {
       posts: posts.slice(0, realLimit),

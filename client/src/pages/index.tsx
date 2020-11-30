@@ -1,21 +1,39 @@
-import { Box, Button, Heading, VStack, Text, Flex } from '@chakra-ui/react'
+import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
+import {
+  Box,
+  Button,
+  Heading,
+  VStack,
+  Text,
+  Flex,
+  Spacer,
+  Icon,
+  Stack,
+  IconButton,
+} from '@chakra-ui/react'
 import { withUrqlClient } from 'next-urql'
 import NextLink from 'next/link'
 import React, { useState } from 'react'
 import { Layout } from '../components/Layout'
+import { PostCard } from '../components/PostCard'
 import { usePostsQuery } from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
 
 interface indexProps {}
 
 const Index: React.FC<indexProps> = ({}) => {
-  const [variables, setVariables] = useState({ limit: 33, cursor: null as null | string })
+  const [variables, setVariables] = useState({ limit: 15, cursor: null as null | string })
   const [{ data, fetching }] = usePostsQuery({
     variables,
   })
 
   if (!fetching && !data) {
     return <div>post query failed?</div>
+  }
+
+  const updoot = (post, value): void => {
+    console.log(post)
+    console.log(value)
   }
 
   return (
@@ -29,12 +47,7 @@ const Index: React.FC<indexProps> = ({}) => {
       <br />
       <VStack mt={4} spacing={8} align="strech">
         {data && !fetching ? (
-          data.posts.posts.map((post) => (
-            <Box key={post.id} p={5} shadow="md" borderWidth="1px">
-              <Heading fontSize="xl">{post.title}</Heading>
-              <Text mt={4}>{post.textSnippet}</Text>
-            </Box>
-          ))
+          data.posts.posts.map((post) => <PostCard key={post.id} post={post} />)
         ) : (
           <Box>loading...</Box>
         )}
