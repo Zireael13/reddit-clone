@@ -50,7 +50,7 @@ export class UserResolver {
 
   @Query(() => User, { nullable: true })
   async me(@Ctx() { req }: MyContext): Promise<User | undefined> {
-    console.log("session: ", req.session);
+    //console.log("session: ", req.session);
     if (!req.session.userId) {
       return undefined;
     }

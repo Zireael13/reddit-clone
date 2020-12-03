@@ -1,16 +1,4 @@
-import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
-import {
-  Box,
-  Button,
-  Heading,
-  VStack,
-  Text,
-  Flex,
-  Spacer,
-  Icon,
-  Stack,
-  IconButton,
-} from '@chakra-ui/react'
+import { Box, Button, Flex, Heading, VStack } from '@chakra-ui/react'
 import { withUrqlClient } from 'next-urql'
 import NextLink from 'next/link'
 import React, { useState } from 'react'
@@ -73,4 +61,4 @@ const Index: React.FC<indexProps> = ({}) => {
   )
 }
 
-export default withUrqlClient(createUrqlClient, { ssr: true })(Index)
+export default withUrqlClient(createUrqlClient, { ssr: false })(Index)

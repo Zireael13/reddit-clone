@@ -49,4 +49,7 @@ export class Post extends BaseEntity {
   @Field(() => String)
   @UpdateDateColumn()
   updatedAt = new Date();
+
+  @Field(() => Int, { nullable: true })
+  voteStatus: number;
 }

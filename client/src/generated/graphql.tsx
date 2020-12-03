@@ -47,6 +47,7 @@ export type Post = {
   creator: User;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
+  voteStatus?: Maybe<Scalars['Int']>;
   textSnippet: Scalars['String'];
 };
 
@@ -145,7 +146,7 @@ export type LoginInput = {
 
 export type PostSnippetFragment = (
   { __typename?: 'Post' }
-  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'points' | 'creatorId' | 'textSnippet'>
+  & Pick<Post, 'id' | 'createdAt' | 'updatedAt' | 'title' | 'points' | 'creatorId' | 'textSnippet' | 'voteStatus'>
   & { creator: (
     { __typename?: 'User' }
     & Pick<User, 'id' | 'username'>
@@ -266,6 +267,23 @@ export type MeQuery = (
   )> }
 );
 
+export type PostQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type PostQuery = (
+  { __typename?: 'Query' }
+  & { post?: Maybe<(
+    { __typename?: 'Post' }
+    & Pick<Post, 'id' | 'title' | 'text' | 'createdAt' | 'updatedAt' | 'creatorId' | 'voteStatus' | 'points'>
+    & { creator: (
+      { __typename?: 'User' }
+      & Pick<User, 'username' | 'email' | 'createdAt' | 'updatedAt'>
+    ) }
+  )> }
+);
+
 export type PostsQueryVariables = Exact<{
   limit: Scalars['Int'];
   cursor?: Maybe<Scalars['String']>;
@@ -297,6 +315,7 @@ export const PostSnippetFragmentDoc = gql`
     id
     username
   }
+  voteStatus
 }
     `;
 export const RegularErrorFragmentDoc = gql`
@@ -409,6 +428,30 @@ export const MeDocument = gql`
 
 export function useMeQuery(options: Omit<Urql.UseQueryArgs<MeQueryVariables>, 'query'> = {}) {
   return Urql.useQuery<MeQuery>({ query: MeDocument, ...options });
+};
+export const PostDocument = gql`
+    query Post($id: Int!) {
+  post(id: $id) {
+    id
+    title
+    text
+    createdAt
+    updatedAt
+    creator {
+      username
+      email
+      createdAt
+      updatedAt
+    }
+    creatorId
+    voteStatus
+    points
+  }
+}
+    `;
+
+export function usePostQuery(options: Omit<Urql.UseQueryArgs<PostQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<PostQuery>({ query: PostDocument, ...options });
 };
 export const PostsDocument = gql`
     query Posts($limit: Int!, $cursor: String) {
