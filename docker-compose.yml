@@ -6,7 +6,7 @@ services:
     volumes:
       - ./data/postgres:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_DB=reddit
+      - POSTGRES_DB=readit
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:

@@ -1,6 +1,5 @@
-import { Button, Flex, Heading, VStack } from '@chakra-ui/react'
+import { Button, Flex, VStack } from '@chakra-ui/react'
 import { withUrqlClient } from 'next-urql'
-import NextLink from 'next/link'
 import React, { ReactElement, useState } from 'react'
 import { Layout } from '../components/Layout'
 import { PostCard } from '../components/PostCard'

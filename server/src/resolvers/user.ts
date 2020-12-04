@@ -145,7 +145,7 @@ export class UserResolver {
   async forgotPassword(
     @Arg("email") email: string,
     @Ctx() { redis }: MyContext
-  ) {
+  ): Promise<boolean> {
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
@@ -161,7 +161,7 @@ export class UserResolver {
       1000 * 60 * 60 * 24 * 3 // 3 days
     );
 
-    const html = `<a href="http://localhost:3000/change-password/${token}">reset password</a>`;
+    const html = `<a href="http://${process.env.DOMAIN}/change-password/${token}">reset password</a>`;
 
     await sendEmail(email, "Forgot Password", html);
 

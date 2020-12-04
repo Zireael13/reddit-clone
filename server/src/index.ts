@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import "dotenv-safe/config";
 import { COOKIE_NAME, __prod__ } from "./constants";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
@@ -17,6 +18,8 @@ import { createConnection } from "typeorm";
 import { Post } from "./entities/Post";
 import path from "path";
 import { Updoot } from "./entities/Updoot";
+import { createUserLoader } from "./utils/createUserLoader";
+import { createUpdootLoader } from "./utils/createUpdootLoader";
 // rerun
 const main = async () => {
   const conn = await createConnection({
@@ -24,8 +27,9 @@ const main = async () => {
     database: "reddit",
     username: "postgres",
     password: "postgres",
-    logging: true,
-    synchronize: true,
+    url: process.env.DATABASE_URL,
+    logging: !__prod__,
+    synchronize: !__prod__,
     migrations: [path.join(__dirname, "./migrations/*")],
     entities: [Post, User, Updoot],
   });
@@ -35,10 +39,12 @@ const main = async () => {
   // await Post.delete({});
 
   const app = express();
-  app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+  app.use(cors({ origin: process.env.CORS_ORIGIN, credentials: true }));
 
   const RedisStore = connectRedis(session);
-  const redis = new Redis();
+  const redis = new Redis(process.env.REDIS_URL);
+
+  app.set("proxy", 1);
 
   app.use(
     session({
@@ -52,9 +58,10 @@ const main = async () => {
         httpOnly: true,
         secure: __prod__,
         sameSite: "lax", //csrf
+        domain: __prod__ ? ".mattwilkinson.dev" : undefined,
       },
       saveUninitialized: false,
-      secret: "iwantjoebiden",
+      secret: process.env.SESSION_SECRET,
       resave: false,
     })
   );
@@ -64,7 +71,13 @@ const main = async () => {
       resolvers: [HelloResolver, PostResolver, UserResolver],
       validate: false,
     }),
-    context: ({ req, res }): MyContext => ({ req, res, redis }),
+    context: ({ req, res }): MyContext => ({
+      req,
+      res,
+      redis,
+      userLoader: createUserLoader(),
+      updootLoader: createUpdootLoader(),
+    }),
   });
 
   apolloServer.applyMiddleware({
@@ -78,7 +91,9 @@ const main = async () => {
   const posts = await orm.em.find(Post, {});
   console.log(posts); */
 
-  app.listen(4000, () => console.log("server started on port 4000"));
+  app.listen(parseInt(process.env.PORT), () =>
+    console.log(`server started on port ${process.env.PORT}`)
+  );
 };
 
 main().catch((err) => {
