@@ -1,9 +1,9 @@
-import { TriangleUpIcon, TriangleDownIcon, DeleteIcon } from '@chakra-ui/icons'
-import { Flex, VStack, IconButton, Stack, Heading, Text, Link, Icon } from '@chakra-ui/react'
-import React, { useState } from 'react'
-import { PostSnippetFragment, useDeletePostMutation, useVoteMutation } from '../generated/graphql'
+import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
+import { Box, Flex, Heading, IconButton, Stack, Text, VStack } from '@chakra-ui/react'
+import React from 'react'
+import { useVoteMutation } from '../generated/graphql'
 import { NextChakraLink } from './NextChakraLink'
-import NextLink from 'next/link'
+import { PostActions } from './PostActions'
 
 interface PostCardProps {
   post: any
@@ -12,8 +12,6 @@ interface PostCardProps {
 export const PostCard: React.FC<PostCardProps> = (props) => {
   const [, vote] = useVoteMutation()
   const { post } = props
-
-  const [, deletePost] = useDeletePostMutation()
 
   return (
     <Flex p={5} shadow="md" borderWidth="1px">
@@ -45,15 +43,9 @@ export const PostCard: React.FC<PostCardProps> = (props) => {
         <Text>Posted by: {post.creator.username}</Text>
         <Flex align="center">
           <Text>{post.textSnippet}</Text>
-          <IconButton
-            ml="auto"
-            icon={<DeleteIcon />}
-            onClick={() => deletePost({ id: post.id })}
-            colorScheme="red"
-            aria-label="Delete Post"
-          >
-            Delete Post
-          </IconButton>
+          <Box ml="auto">
+            <PostActions id={post.id} creatorId={post.creator.id} />
+          </Box>
         </Flex>
       </Stack>
     </Flex>
