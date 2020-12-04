@@ -1,19 +1,16 @@
 import { Box, Button, Link } from '@chakra-ui/react'
-import { Formik, Form } from 'formik'
-import { NextPage } from 'next'
+import { Form, Formik } from 'formik'
+import { withUrqlClient } from 'next-urql'
+import NextLink from 'next/link'
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import { InputField } from '../../components/InputField'
 import { Wrapper } from '../../components/Wrapper'
 import { useChangePasswordMutation } from '../../generated/graphql'
-import { toErrorMap } from '../../utils/toErrorMap'
-import { useRouter } from 'next/router'
-import { withUrqlClient } from 'next-urql'
 import { createUrqlClient } from '../../utils/createUrqlClient'
-import NextLink from 'next/link'
+import { toErrorMap } from '../../utils/toErrorMap'
 
-interface changePasswordProps {}
-
-const ChangePassword: NextPage = () => {
+const ChangePassword: React.FC = () => {
   const router = useRouter()
   const [, changePassword] = useChangePasswordMutation()
   const [tokenError, setTokenError] = useState('')

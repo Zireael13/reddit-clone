@@ -11,9 +11,7 @@ import { usePostQuery, useUpdatePostMutation } from '../../../generated/graphql'
 import { createUrqlClient } from '../../../utils/createUrqlClient'
 import { useGetIntId } from '../../../utils/useGetIntId'
 
-interface EditPostProps {}
-
-export const EditPost: React.FC<EditPostProps> = () => {
+export const EditPost: React.FC = () => {
   const router = useRouter()
   const intId = useGetIntId()
   const [{ data, fetching }] = usePostQuery({

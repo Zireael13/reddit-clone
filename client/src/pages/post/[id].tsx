@@ -7,9 +7,7 @@ import { PostActions } from '../../components/PostActions'
 import { createUrqlClient } from '../../utils/createUrqlClient'
 import { usePostFromUrl } from '../../utils/usePostFromUrl'
 
-interface PostProps {}
-
-export const Post: React.FC<PostProps> = ({}) => {
+export const Post: React.FC = () => {
   const [{ data, fetching }] = usePostFromUrl()
   console.log(data)
 

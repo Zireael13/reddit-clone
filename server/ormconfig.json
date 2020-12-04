@@ -6,5 +6,5 @@
   "password": "postgres",
   "database": "readit",
   "entities": ["dist/entities/*.js"],
-  "migrations": ["src/migrations/*.ts"]
+  "migrations": ["dist/migrations/*.js"]
 }

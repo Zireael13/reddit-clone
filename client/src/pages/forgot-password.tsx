@@ -7,9 +7,7 @@ import { Wrapper } from '../components/Wrapper'
 import { useForgotPasswordMutation } from '../generated/graphql'
 import { createUrqlClient } from '../utils/createUrqlClient'
 
-interface ForgotPasswordProps {}
-
-const ForgotPassword: React.FC<ForgotPasswordProps> = ({}) => {
+const ForgotPassword: React.FC = () => {
   const [, forgotPassword] = useForgotPasswordMutation()
   const [emailSent, setEmailSent] = useState(false)
   return (
