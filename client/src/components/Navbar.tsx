@@ -1,8 +1,9 @@
-import { Box, Button, Flex, HStack, Link } from '@chakra-ui/react'
+import { Box, Button, Flex, Heading, HStack, Link, Spacer } from '@chakra-ui/react'
 import React from 'react'
 import NextLink from 'next/link'
 import { useLogoutMutation, useMeQuery } from '../generated/graphql'
 import { isServer } from '../utils/isServer'
+import { NextChakraLink } from './NextChakraLink'
 
 interface NavbarProps {}
 
@@ -28,7 +29,7 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
   } else {
     body = (
       <>
-        <Box>Hello {data.me.username}!</Box>
+        <Box>{data.me.username}</Box>
         <Button onClick={() => logout()} isLoading={logoutFetching}>
           Logout
         </Button>
@@ -37,9 +38,22 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
   }
   return (
     <Flex position="sticky" top={0} zIndex={1} bg="green.500">
-      <HStack bg="green.200" p={4} spacing={5} justify="end" ml="auto">
-        {body}
-      </HStack>
+      <Flex flex={1} m="auto" maxW={800} align="center">
+        <Box ml={8}>
+          <NextChakraLink href="/">
+            <Heading>Readit</Heading>
+          </NextChakraLink>
+        </Box>
+        <Spacer />
+        <NextLink href="/create-post">
+          <Button ml="auto" mr={4}>
+            Create New Post
+          </Button>
+        </NextLink>
+        <HStack bg="green.200" p={4} spacing={5} justify="end" ml="auto">
+          {body}
+        </HStack>
+      </Flex>
     </Flex>
   )
 }

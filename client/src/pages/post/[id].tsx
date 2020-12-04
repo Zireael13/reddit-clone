@@ -1,3 +1,4 @@
+import { Box, Heading, Text } from '@chakra-ui/react'
 import { withUrqlClient } from 'next-urql'
 import { useRouter } from 'next/router'
 import React from 'react'
@@ -10,7 +11,6 @@ interface PostProps {}
 export const Post: React.FC<PostProps> = ({}) => {
   const router = useRouter()
   const intId = typeof router.query.id === 'string' ? parseInt(router.query.id) : -1
-  console.log(intId)
   const [{ data, fetching }] = usePostQuery({
     pause: intId === -1,
     variables: {
@@ -18,14 +18,32 @@ export const Post: React.FC<PostProps> = ({}) => {
     },
   })
 
+  console.log(data)
+
   if (fetching) {
     return (
       <Layout>
-        <div>loading...</div>
+        <Box>loading...</Box>
       </Layout>
     )
   }
-  return <Layout>{data?.post?.text}</Layout>
+
+  if (!data?.post) {
+    return (
+      <Layout>
+        <Box>Could not find post</Box>
+      </Layout>
+    )
+  }
+
+  return (
+    <Layout>
+      <Box>
+        <Heading mb={5}>{data.post.title}</Heading>
+        <Text>{data?.post?.text}</Text>
+      </Box>
+    </Layout>
+  )
 }
 
 export default withUrqlClient(createUrqlClient, { ssr: true })(Post)

@@ -6,7 +6,7 @@ import { User } from "./User";
 @ObjectType()
 @Entity()
 export class Updoot extends BaseEntity {
-  @Field()
+  @Field(() => Int)
   @Column({ type: "int" })
   value: number;
 
@@ -23,6 +23,8 @@ export class Updoot extends BaseEntity {
   postId: number;
 
   @Field(() => Post)
-  @ManyToOne(() => Post, (post) => post.updoots)
+  @ManyToOne(() => Post, (post) => post.updoots, {
+    onDelete: "CASCADE",
+  })
   post: Post;
 }

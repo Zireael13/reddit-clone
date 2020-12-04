@@ -1,4 +1,3 @@
-import { Post } from "../entities/Post";
 import {
   Arg,
   Ctx,
@@ -13,12 +12,11 @@ import {
   Root,
   UseMiddleware,
 } from "type-graphql";
-import { MyContext } from "../types";
-import { isAuth } from "../middleware/isAuth";
 import { getConnection } from "typeorm";
+import { Post } from "../entities/Post";
 import { Updoot } from "../entities/Updoot";
-import session from "express-session";
-import { replace } from "lodash";
+import { isAuth } from "../middleware/isAuth";
+import { MyContext } from "../types";
 
 @InputType()
 class PostInput {
@@ -222,8 +220,20 @@ export class PostResolver {
   }
 
   @Mutation(() => Boolean)
-  async deletePost(@Arg("id") id: number): Promise<boolean> {
-    await Post.delete(id);
+  @UseMiddleware(isAuth)
+  async deletePost(
+    @Arg("id", () => Int) id: number,
+    @Ctx() { req }: MyContext
+  ): Promise<boolean> {
+    // const post = await Post.findOne({ id, creatorId: req.session.userId });
+    // if (!post) {
+    //   return false;
+    // }
+
+    // await Updoot.delete({ postId: id });
+    // await Post.delete({ id, creatorId: req.session.userId });
+
+    await Post.delete({ id, creatorId: req.session.userId });
     return true;
   }
 }
