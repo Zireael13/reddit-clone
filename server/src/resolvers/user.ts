@@ -19,7 +19,7 @@ import { validateRegister } from "../utils/validateRegister";
 import { v4 } from "uuid";
 
 @ObjectType()
-class FieldError {
+export class FieldError {
   @Field()
   field: string;
 
